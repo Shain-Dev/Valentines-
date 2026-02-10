@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEING MY VALENTINE HOURS?</title>
+    <link rel="stylesheet" href="valentine.css">
+</head>
+<body>
+    <div class="floating-hearts" id="hearts"></div>
+    
+    <div class="container" id="mainContainer">
+        <h1>Will You Be My Valentine, My baby Prawns?? 💕</h1>
+        <div class="buttons">
+            <button id="yesBtn" onclick="showConfirmation()">Yessssssss 💝</button>
+            <button id="noBtn" onmouseenter="moveNoBtn()" ontouchstart="moveNoBtn(event)" ontouchmove="moveNoBtn(event)" onmousemove="moveNoBtn()" onclick="showScare()">I am not taking NO for an Answer 💔</button>
+        </div>
+    </div>
+
+    <script>
+        // Store original content for restoration
+        let originalContent = '';
+        
+        // Create floating hearts
+        function createHearts() {
+            const heartsContainer = document.getElementById('hearts');
+            const heartSymbols = ['💕', '💖', '💗', '💓', '💝', '❤️', '💘', '💟'];
+            
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 8 + 's';
+                heart.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        // Move the No button to a random position far from Yes button
+        let noBtnInterval = null;
+        let isMoving = false;
+        
+        function moveNoBtn(event) {
+            // Prevent default touch behavior
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            
+            if (!noBtn || !yesBtn) return;
+            
+            // Get current position before changing to fixed
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            // Only convert to fixed position on first interaction
+            if (noBtn.style.position !== 'fixed') {
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = btnRect.left + 'px';
+                noBtn.style.top = btnRect.top + 'px';
+                
+                // Start continuous movement on mobile
+                if ('ontouchstart' in window && !noBtnInterval) {
+                    noBtnInterval = setInterval(() => {
+                        moveToRandomPosition(noBtn, yesBtn);
+                    }, 1500);
+                }
+                
+                setTimeout(() => {
+                    moveToRandomPosition(noBtn, yesBtn);
+                }, 10);
+            } else {
+                moveToRandomPosition(noBtn, yesBtn);
+            }
+        }
+        
+        function moveToRandomPosition(noBtn, yesBtn) {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            const btnRect = noBtn.getBoundingClientRect();
+            const btnWidth = btnRect.width;
+            const btnHeight = btnRect.height;
+            
+            const yesRect = yesBtn.getBoundingClientRect();
+            const yesCenterX = yesRect.left + yesRect.width / 2;
+            const yesCenterY = yesRect.top + yesRect.height / 2;
+            
+            // Safe margins
+            const margin = 20;
+            const maxX = viewportWidth - btnWidth - margin;
+            const maxY = viewportHeight - btnHeight - margin;
+            const minX = margin;
+            const minY = margin;
+            
+            // Minimum distance from Yes button (at least 200px or 50% of screen width on mobile)
+            const minDistance = Math.max(200, viewportWidth * 0.5);
+            
+            let randomX, randomY, distance;
+            let attempts = 0;
+            
+            // Try to find a position far from Yes button
+            do {
+                randomX = Math.random() * (maxX - minX) + minX;
+                randomY = Math.random() * (maxY - minY) + minY;
+                
+                const noCenterX = randomX + btnWidth / 2;
+                const noCenterY = randomY + btnHeight / 2;
+                
+                distance = Math.sqrt(
+                    Math.pow(noCenterX - yesCenterX, 2) + 
+                    Math.pow(noCenterY - yesCenterY, 2)
+                );
+                
+                attempts++;
+            } while (distance < minDistance && attempts < 100);
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+        
+        // Initialize mobile behavior - start moving immediately
+        function initMobileEvasion() {
+            if ('ontouchstart' in window || window.innerWidth < 768) {
+                const noBtn = document.getElementById('noBtn');
+                const yesBtn = document.getElementById('yesBtn');
+                
+                if (noBtn && yesBtn) {
+                    // Start moving immediately on mobile/tablet
+                    setTimeout(() => {
+                        moveNoBtn();
+                    }, 100);
+                }
+            }
+        }
+
+        // Create floating emojis for celebration
+        function createFloatingEmojis() {
+            const emojiContainer = document.createElement('div');
+            emojiContainer.className = 'floating-emojis';
+            document.body.appendChild(emojiContainer);
+            
+            const emojis = ['💕', '🥰', '😍', '💋', '🦭', '🦐'];
+            
+            for (let i = 0; i < 30; i++) {
+                const emoji = document.createElement('div');
+                emoji.className = 'floating-emoji';
+                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.left = Math.random() * 100 + '%';
+                emoji.style.animationDelay = Math.random() * 6 + 's';
+                emoji.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                emojiContainer.appendChild(emoji);
+            }
+        }
+
+        // Show confirmation page after clicking Yes
+        function showConfirmation() {
+            // Store current body content before replacing
+            originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div class="celebration-container">
+                    <h1 class="celebration-title">Are you sure, you are basically saying that we gonna ride and die together forever!! 🤔</h1>
+                    <div class="confirmation-buttons">
+                        <button id="confirmYes" onclick="sayYes()" class="confirm-btn yes-confirm">YES, I'M SURE! 💕</button>
+                        <button id="confirmThink" onclick="showScare()" class="confirm-btn think-confirm">I kinda need to think about this... 🤔</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Show scare GIF
+        function showScare() {
+            document.body.innerHTML = `
+                <div class="scare-container">
+                    
+                    <img src="Scare.gif" alt="Scare" class="scare-gif">
+                    <button class="back-btn" onclick="goBackToStart()">Go Back 💔</button>
+                </div>
+            `;
+        }
+        
+        // Go back to the very beginning (reset everything)
+        function goBackToStart() {
+            location.reload();
+        }
+        
+        // Go back and immediately start moving the No button
+        function goBackAndMove() {
+            // Restore original content
+            document.body.innerHTML = originalContent;
+            
+            // Re-initialize floating hearts
+            createHearts();
+            
+            // Get the buttons
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            
+            // Immediately set No button to fixed position and move it away
+            if (noBtn && yesBtn) {
+                // Get current position
+                const btnRect = noBtn.getBoundingClientRect();
+                
+                // Set to fixed at current position
+                noBtn.style.position = 'fixed';
+                noBtn.style.left = btnRect.left + 'px';
+                noBtn.style.top = btnRect.top + 'px';
+                
+                // Move it to random position immediately
+                setTimeout(() => {
+                    moveToRandomPosition(noBtn, yesBtn);
+                }, 10);
+            }
+        }
+
+        // Handle Yes button click
+        function sayYes() {
+            // Replace body content with celebration
+            document.body.innerHTML = `
+                <div class="celebration-container">
+                    <h1 class="celebration-title">6th valentine loading.... HEHEHEHE 💕💖💝</h1>
+                    <div class="image-wrapper">
+                        <img src="prawns" alt="Prawns" class="main-image" onerror="this.src='https://via.placeholder.com/600x400/ff6b9d/ffffff?text=Prawns+💕'">
+                        
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOoMhxo50p5rqIYdhgdsrqkQzsNmIP7Ro2Ng&s?w=200&h=200&fit=crop" 
+                             alt="Baby Seal" class="corner-image top-left" 
+                             onerror="this.src='https://via.placeholder.com/120/ff69b4/ffffff?text=🦭'">
+                        <img src="https://a-z-animals.com/media/2019/11/Shrimp-cherry.jpg?w=200&h=200&fit=crop" 
+                             alt="Baby Seal" class="corner-image top-right"
+                             onerror="this.src='https://via.placeholder.com/120/ff69b4/ffffff?text=🦭'">
+                        <img src="https://thumbs.dreamstime.com/b/vector-image-cartoon-funny-shrimp-blue-background-96827972.jpg?width=640&crop=smart&auto=webp&s=0ad6fa707bd6b295f80d2ff3bd9c83670b1aa5e2?w=200&h=200&fit=crop" 
+                             alt="Baby Seal" class="corner-image bottom-left"
+                             onerror="this.src='https://via.placeholder.com/120/ff69b4/ffffff?text=🦭'">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvbmKTJOAmBgLRopC5T0Euhp0kzLsW6zsM0A&s?w=200&h=200&fit=crop" 
+                             alt="Baby Seal" class="corner-image bottom-right"
+                             onerror="this.src='https://via.placeholder.com/120/ff69b4/ffffff?text=🦭'">
+                    </div>
+                    <p class="love-message">TOLD YOU I AM NOT TAKING NO FOR AN ANSWER, YOU ARE GOING TO BE MY FOREVER VALENTINE!!!! 🦐❤️🦭</p>
+                    <button class="relive-btn" onclick="location.reload()">✨ Relive the magical experience of trying this website again ✨</button>
+                </div>
+                <div class="floating-emojis" id="celebrationEmojis"></div>
+            `;
+            
+            // Add floating emojis
+            createFloatingEmojis();
+            
+            // Add more floating hearts
+            setTimeout(() => {
+                const emojiContainer = document.querySelector('.floating-emojis');
+                const extraEmojis = ['🦐', '🦭', '💗', '💝', '❤️', '💘'];
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        const emoji = document.createElement('div');
+                        emoji.className = 'floating-emoji';
+                        emoji.textContent = extraEmojis[Math.floor(Math.random() * extraEmojis.length)];
+                        emoji.style.left = Math.random() * 100 + '%';
+                        emoji.style.animationDuration = '5s';
+                        emojiContainer.appendChild(emoji);
+                    }, i * 200);
+                }
+            }, 500);
+        }
+
+        // Initialize floating hearts
+        createHearts();
+        
+        // Initialize mobile evasion
+        initMobileEvasion();
+        
+        // Handle window resize for No button
+        window.addEventListener('resize', () => {
+            const noBtn = document.getElementById('noBtn');
+            if (noBtn && noBtn.style.position === 'fixed') {
+                moveNoBtn();
+            }
+        });
+        
+        // Clear interval when page is hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && noBtnInterval) {
+                clearInterval(noBtnInterval);
+                noBtnInterval = null;
+            }
+        });
+    </script>
+</body>
+</html>
